@@ -48,7 +48,6 @@ char* execvp_stdout(char *argv[]) {
   }
 }
 
-
 char* append_line(char* base, const char* name) {
   int blen = strlen(base);
   int nlen = strlen(name);
@@ -161,11 +160,15 @@ Status getdirinfo(char *path) {
 int main(int argc, char* argv[]) {
   if (argc == 1) {
     char* cwd = getcwd(NULL, 0);
-    getdirinfo(cwd);
+    if (getdirinfo(cwd) != TRACKED) {
+      puts(cwd);
+    }
     free(cwd);
   } else {
     for (int i = 1; i < argc; i++) {
-      getdirinfo(argv[i]);
+      if (getdirinfo(argv[i]) != TRACKED) {
+        puts(argv[i]);
+      }
     }
   }
 
