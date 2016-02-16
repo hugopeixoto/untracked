@@ -14,8 +14,9 @@ typedef enum {
 } Status;
 
 char* join_paths(const char* base, const char* name) {
-  char* path = (char*)malloc(strlen(base) + strlen(name) + 2);
-  sprintf(path, "%s/%s", base, name);
+  int len = strlen(base) + strlen(name) + 2;
+  char* path = (char*)malloc(len);
+  snprintf(path, len, "%s/%s", base, name);
   return path;
 }
 
@@ -53,7 +54,7 @@ char* append_line(char* base, const char* name) {
   int nlen = strlen(name);
 
   base = (char*)realloc(base, blen + nlen + 2);
-  strcpy(base + blen, name);
+  strncpy(base + blen, name, nlen);
   base[blen + nlen] = '\n';
   base[blen + nlen+1] = '\0';
 
