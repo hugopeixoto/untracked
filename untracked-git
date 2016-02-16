@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+test -z "`git -C "$1" status --porcelain`"

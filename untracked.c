@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <unistd.h>
 
@@ -20,31 +20,18 @@ char* join_paths(const char* base, const char* name) {
   return path;
 }
 
-char* execvp_stdout(char *argv[]) {
-  int pfds[2];
-  pid_t cpid;
-
-  pipe(pfds);
-  if ((cpid = fork())== 0) {
-    close(pfds[0]);
-    dup2(pfds[1], 1);
-    close(pfds[1]);
-    execvp(argv[0], argv);
+Status exec_status(const char* cmd, const char* path) {
+  if (fork() == 0) {
+    execlp(cmd, cmd, path, NULL);
     exit(127);
   } else {
-    char buf[BUFSIZ];
-    int s = 0;
-    char* output = strdup("");
-    close(pfds[1]);
-    for (;;) {
-      int n = read(pfds[0], buf, BUFSIZ);
-      if (n <= 0) {
-        return output;
-      }
+    int code;
+    wait(&code);
 
-      output = realloc(output, s + n);
-      memcpy(output + s, buf, n);
-      s += n;
+    if (code == 0) {
+      return TRACKED;
+    } else {
+      return MIXED;
     }
   }
 }
@@ -75,29 +62,17 @@ int is_dir(const char *path) {
 
 int is_git(const char *path)
 {
-  char* headdir = join_paths(path, ".git/HEAD");
-  char* objsdir = join_paths(path, ".git/objects");
-  char* refsdir = join_paths(path, ".git/refs");
-
-  int rv = is_file(headdir) && is_dir(objsdir) && is_dir(refsdir);
-
-  free(headdir);
-  free(objsdir);
-  free(refsdir);
+  char* gitdir = join_paths(path, ".git");
+  int rv = is_dir(gitdir);
+  free(gitdir);
   return rv;
 }
 
-Status git_status(char *path) {
-  char* status = execvp_stdout(
-      (char*[]){"git", "-C", path, "status", "--porcelain", NULL});
-  int clean_gwd = !strcmp(status, "");
-  free(status);
-
-  if (!clean_gwd) {
-    return MIXED;
-  }
-
-  return TRACKED;
+int is_svn(const char *path) {
+  char* svndir = join_paths(path, ".svn");
+  int rv = is_dir(svndir);
+  free(svndir);
+  return rv;
 }
 
 Status getdirinfo(char *path) {
@@ -110,7 +85,11 @@ Status getdirinfo(char *path) {
   }
 
   if (is_git(path)) {
-    return git_status(path);
+    return exec_status("untracked-git", path);
+  }
+
+  if (is_svn(path)) {
+    return exec_status("untracked-svn", path);
   }
 
   if (!(fd = opendir(path))) {
