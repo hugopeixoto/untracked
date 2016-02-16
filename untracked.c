@@ -72,31 +72,23 @@ int is_dir(const char *path) {
   return S_ISDIR(path_stat.st_mode);
 }
 
-int is_bare_git(const char *path) {
-  char* headdir = join_paths(path, "HEAD");
-  char* objsdir = join_paths(path, "objects");
-  char* refsdir = join_paths(path, "refs");
+int is_git(const char *path)
+{
+  char* headdir = join_paths(path, ".git/HEAD");
+  char* objsdir = join_paths(path, ".git/objects");
+  char* refsdir = join_paths(path, ".git/refs");
 
   int rv = is_file(headdir) && is_dir(objsdir) && is_dir(refsdir);
 
   free(headdir);
   free(objsdir);
   free(refsdir);
-
-  return rv;
-}
-
-int is_git(const char *path)
-{
-  char* gitdir = join_paths(path, ".git");
-  int rv = is_bare_git(gitdir) || is_bare_git(path);
-  free(gitdir);
-
   return rv;
 }
 
 Status git_status(char *path) {
-  char* status = execvp_stdout((char*[]){"git", "-C", path, "status", "--porcelain", NULL});
+  char* status = execvp_stdout(
+      (char*[]){"git", "-C", path, "status", "--porcelain", NULL});
   int clean_gwd = !strcmp(status, "");
   free(status);
 
