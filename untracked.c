@@ -31,7 +31,7 @@ Status exec_status(const char* cmd, const char* path) {
     if (code == 0) {
       return TRACKED;
     } else {
-      return MIXED;
+      return UNTRACKED;
     }
   }
 }
