@@ -55,7 +55,7 @@ int is_file(const char *path) {
 }
 
 int is_dir(const char *path) {
-  struct stat path_stat;
+  struct stat path_stat = {0};
   stat(path, &path_stat);
   return S_ISDIR(path_stat.st_mode);
 }
