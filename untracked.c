@@ -132,13 +132,13 @@ Status getdirinfo(char *path) {
 int main(int argc, char* argv[]) {
   if (argc == 1) {
     char* cwd = getcwd(NULL, 0);
-    if (getdirinfo(cwd) != TRACKED) {
+    if (getdirinfo(cwd) == UNTRACKED) {
       puts(cwd);
     }
     free(cwd);
   } else {
     for (int i = 1; i < argc; i++) {
-      if (getdirinfo(argv[i]) != TRACKED) {
+      if (getdirinfo(argv[i]) == UNTRACKED) {
         puts(argv[i]);
       }
     }
