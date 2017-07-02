@@ -13,6 +13,14 @@ typedef enum {
   MIXED = 3
 } Status;
 
+void strip_trailing_slashes(char* path) {
+  int len = strlen(path);
+
+  while (len && path[len - 1] == '/') {
+    path[--len] = '\0';
+  }
+}
+
 char* join_paths(const char* base, const char* name) {
   int len = strlen(base) + strlen(name) + 2;
   char* path = (char*)malloc(len);
@@ -102,7 +110,7 @@ Status getdirinfo(char *path) {
     Status c;
 
     if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..")) {
-        continue;
+      continue;
     }
 
     child = join_paths(path, dp->d_name);
@@ -132,12 +140,15 @@ Status getdirinfo(char *path) {
 int main(int argc, char* argv[]) {
   if (argc == 1) {
     char* cwd = getcwd(NULL, 0);
+    strip_trailing_slashes(cwd);
+
     if (getdirinfo(cwd) == UNTRACKED) {
       puts(cwd);
     }
     free(cwd);
   } else {
     for (int i = 1; i < argc; i++) {
+      strip_trailing_slashes(argv[i]);
       if (getdirinfo(argv[i]) == UNTRACKED) {
         puts(argv[i]);
       }
