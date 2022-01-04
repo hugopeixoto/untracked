@@ -70,7 +70,7 @@ fn track_status(path: &std::path::PathBuf) -> Status {
             },
             Status::Tracked(RepoStatus::Dirty) => {
                 any_repositories = true;
-                reportable.push(('d', subdir.path()));
+                reportable.push(('m', subdir.path()));
             },
             Status::Untracked => {
                 reportable.push(('u', subdir.path()));
