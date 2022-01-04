@@ -21,3 +21,6 @@ u /home/hugopeixoto/work/personal/dedup
 The first character represents the status of the file/directory, where:
 - `m` means modified: the directory is a git repository but with uncommited changes
 - `u` means untracked: the directory/file is not tracked in git repository
+
+The program will exit with status code 1 if there were any untracked or
+modified files found, and 0 if everything was tracked.

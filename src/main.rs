@@ -89,25 +89,31 @@ fn track_status(path: &std::path::PathBuf) -> Status {
     }
 }
 
-fn check_untracked(path: &std::path::PathBuf) {
+fn check_untracked(path: &std::path::PathBuf) -> bool {
     let path = path.canonicalize().unwrap();
 
     match track_status(&path) {
         Status::Untracked | Status::Tracked(RepoStatus::Dirty) => {
             println!("{}", path.to_string_lossy());
+            false
         },
-        _ => {},
+        _ => true,
     }
 }
 
 fn main() {
+    let mut ok = true;
     if std::env::args().len() == 1 {
         let cwd = std::env::current_dir().expect("can't get current directory");
 
-        check_untracked(&cwd);
+        ok &= check_untracked(&cwd);
     } else {
         for arg in std::env::args().skip(1) {
-            check_untracked(&std::path::PathBuf::from(&arg));
+            ok &= check_untracked(&std::path::PathBuf::from(&arg));
         }
+    }
+
+    if !ok {
+        std::process::exit(1);
     }
 }
