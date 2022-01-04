@@ -12,6 +12,8 @@ enum Status {
     Tracked(RepoStatus),
 }
 
+// SVN: svn status "$1"
+
 trait GitDirectory {
     fn is_git(&self) -> bool;
     fn git_status(&self) -> RepoStatus;
@@ -39,7 +41,6 @@ impl GitDirectory for std::path::PathBuf {
         }
     }
 }
-
 
 fn track_status(path: &std::path::PathBuf) -> Status {
     if !path.is_dir() {
@@ -90,7 +91,6 @@ fn track_status(path: &std::path::PathBuf) -> Status {
 
 fn check_untracked(path: &std::path::PathBuf) {
     let path = path.canonicalize().unwrap();
-    println!("checking {:?}", path);
 
     match track_status(&path) {
         Status::Untracked | Status::Tracked(RepoStatus::Dirty) => {
@@ -99,7 +99,6 @@ fn check_untracked(path: &std::path::PathBuf) {
         _ => {},
     }
 }
-
 
 fn main() {
     if std::env::args().len() == 1 {
