@@ -4,15 +4,20 @@ This tool helps me figure out which projects are not tracked by a git
 repository. Running this on my `$HOME/work` directory outputs the following:
 
 ```
-hugopeixoto@hylia$ untracked ~/work
-/home/hugopeixoto/work/contrib/suckless/bin
-/home/hugopeixoto/work/contrib/suckless/musl-dist
-/home/hugopeixoto/work/ndrive/.venv
-/home/hugopeixoto/work/personal/sicp.py
-/home/hugopeixoto/work/personal/unix-clone/demo.tar.bz2
-/home/hugopeixoto/work/personal/unix-clone/package.tar.bz2
-/home/hugopeixoto/work/personal/unix-clone/uClibc-toolchain-i386.tar.bz2
-/home/hugopeixoto/work/porto.rb/docker-talk.tar
-/home/hugopeixoto/work/sandbox
-/home/hugopeixoto/work/tmp
+hugopeixoto@hylia$ untracked ~/work/personal
+m /home/hugopeixoto/work/personal/challenges/aoc2021
+m /home/hugopeixoto/work/personal/challenges/aoc2020
+m /home/hugopeixoto/work/personal/dotfiles
+m /home/hugopeixoto/work/personal/tico
+u /home/hugopeixoto/work/personal/talks
+m /home/hugopeixoto/work/personal/netdiff
+m /home/hugopeixoto/work/personal/dockerfiles
+m /home/hugopeixoto/work/personal/infrastructure
+m /home/hugopeixoto/work/personal/notes
+u /home/hugopeixoto/work/personal/weekly2items
+u /home/hugopeixoto/work/personal/dedup
 ```
+
+The first character represents the status of the file/directory, where:
+- `m` means modified: the directory is a git repository but with uncommited changes
+- `u` means untracked: the directory/file is not tracked in git repository
