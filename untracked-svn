@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-test -z "`svn status "$1" 2> /dev/null`"
