@@ -93,8 +93,12 @@ fn check_untracked(path: &std::path::PathBuf) -> bool {
     let path = path.canonicalize().unwrap();
 
     match track_status(&path) {
-        Status::Untracked | Status::Tracked(RepoStatus::Dirty) => {
-            println!("{}", path.to_string_lossy());
+        Status::Untracked => {
+            println!("u {}", path.to_string_lossy());
+            false
+        },
+        Status::Tracked(RepoStatus::Dirty) => {
+            println!("m {}", path.to_string_lossy());
             false
         },
         _ => true,
