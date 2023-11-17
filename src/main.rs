@@ -106,15 +106,15 @@ fn check_untracked(path: &std::path::PathBuf) -> bool {
 }
 
 fn main() {
-    let mut ok = true;
-    if std::env::args().len() == 1 {
-        let cwd = std::env::current_dir().expect("can't get current directory");
-
-        ok &= check_untracked(&cwd);
+    let directories = if std::env::args().len() == 1 {
+        vec![std::env::current_dir().unwrap()]
     } else {
-        for arg in std::env::args().skip(1) {
-            ok &= check_untracked(&std::path::PathBuf::from(&arg));
-        }
+        std::env::args().skip(1).map(std::path::PathBuf::from).collect()
+    };
+
+    let mut ok = true;
+    for directory in directories {
+        ok &= check_untracked(&directory);
     }
 
     if !ok {
